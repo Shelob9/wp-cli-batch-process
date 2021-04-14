@@ -19,7 +19,6 @@ define( 'PLUGIN_NAME_MIGRATION_VERSION', '0.1.0' );
 
 $files = [
 	'helpers.php',
-	'migration.php',
 	'commands.php',
 ];
 

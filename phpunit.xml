@@ -5,8 +5,8 @@
 	verbose="true"
 	>
 	<testsuites>
-		<testsuite name="wp-cli-term-migration">
-			<directory suffix=".php">tests/phpunit</directory>
+		<testsuite name="unit">
+			<directory suffix=".php">tests/unit</directory>
 		</testsuite>
 	</testsuites>
 	<filter>

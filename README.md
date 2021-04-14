@@ -1,2 +1,14 @@
-# wp-cli-term-migration
-WordPress plugin with WP CLI commands to migrate taxonomy terms
+# WordPress CLI PLugin
+
+WordPress plugin with WP CLI commands to 
+
+## Development
+
+- Install
+    - `git clone ...`
+    - `composer install`
+- Run unit tests
+    - `compose test`
+- Lint
+    - `composer lint`
+    - `composer fix`

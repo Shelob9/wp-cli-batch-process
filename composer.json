@@ -1,6 +1,6 @@
 {
 	"name": "someone/plugin-name",
-	"description": "WordPress plugin with WP CLI commands to migrate taxonomy terms",
+	"description": "WordPress plugin with WP CLI commands to do soemthing",
 	"type": "wordpress-plugin",
 	"license": "GPLv2 or later",
 	"authors": [
@@ -15,5 +15,15 @@
 	"require-dev": {
 		"phpunit/phpunit": "^7",
 		"10up/phpcs-composer": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+		  "PluginNamespace\\": "includes/classes/"
+		}
+	},
+	"scripts": {
+		"test":"./vendor/bin/phpunit",
+		"lint": "./vendor/bin/phpcs ./includes ./tests/unit",
+		"fix":"./vendor/bin/phpcbf ./includes ./tests/unit"
 	}
 }
