@@ -1,6 +1,9 @@
 <?php
 namespace PluginNamespace\Commands;
 
+use PluginNamespace\QueryFromJson;
+use PluginNamespace\Helpers;
+
 /**
  * Gets a namespaced function name.
  *
@@ -29,19 +32,34 @@ function add_commands() {
 function default_results() {
 	return [
 		'success'       => false,
+		'completed'     => false,
 		'error_code'    => false,
 		'error_message' => false,
 	];
 }
 
+function get_procesors() {
+	return apply_filters(
+		'plugin_name_get_processors',
+		[]
+	);
+}
+
+function get_processor( string $name ) {
+	$processors = get_processor();
+	if ( isset( $processors[ $name ] ) ) {
+		return $processors[ $name ];
+	}
+	return false;
+}
 /**
  *
  *
  *
  * ## OPTIONS
  *
- * <arg>
- * : desc
+ * <processor>
+ * : name of processor
  *
  * [--optional-arg]
  * : Desc
@@ -51,16 +69,24 @@ function default_results() {
  * @return void
  */
 function run_command( $args, $assoc_args = [] ) {
-
-	$arg      = $args[0];
-	$optional = isset( $assoc_args['optional-arg'] );
-
-	$results = default_results();
+	$processor_name = $args[0];
+	$results        = default_results();
+	$processor      = get_processor( $processor_name );
 	// phpcs:ignore
-	if ( rand() ) {
-		\WP_CLI::error( 'Error' );
+	if ( ! $processor ) {
+		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 	}
 
+	$argsProvider   = new QueryFromJson( $processor[0] );
+	$handler        = new $processor[1]();
+	$query          = new \WP_Query();
+	$processResults = PluginNamespace\Helpers::process(
+		$argsProvider,
+		$handler,
+		$query
+	);
+
+	$results = array_merge( $results, $processResults->toArray() );
 	if ( $results['success'] ) {
 		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
 	} else {

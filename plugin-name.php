@@ -30,3 +30,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	// Adds the migration CLI Commands.
 	\PluginNamespace\Commands\add_commands();
 }
+
+add_filter( 'plugin_name_get_processors', function($processors){
+	$processors['delete-all-draft-products'] = [
+		__DIR__ . '/all-draft-products.json',
+		PluginNamespace::DeleteHandler
+	];
+	return $processors;
+});
