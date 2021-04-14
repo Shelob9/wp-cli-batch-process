@@ -1,0 +1,36 @@
+name: PHP Unit Tests
+
+on: push
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: [ 7.2, 7.3, 7.4 ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+      # Install composer with cache
+      ## See https://github.com/marketplace/actions/setup-php-action#cache-composer-dependencies
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: php-${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      # Run unit tests
+      - name : Unit Tests
+        run: composer test
+  
