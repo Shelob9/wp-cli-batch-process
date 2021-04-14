@@ -1,13 +1,6 @@
 <?php
-/**
- * WP Term Migration CLI commands
- *
- * @package PluginNamespace
- */
-
 namespace PluginNamespace\Commands;
 
-use PluginNamespace\Migration;
 
 /**
  * Gets a namespaced function name.
