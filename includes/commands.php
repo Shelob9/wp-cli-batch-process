@@ -1,7 +1,6 @@
 <?php
 namespace PluginNamespace\Commands;
 
-
 /**
  * Gets a namespaced function name.
  *

@@ -2,5 +2,5 @@
 namespace PluginNamespace;
 
 interface RecivesResults {
-    public function handle($results):bool;
+	public function handle( $results):bool;
 }
