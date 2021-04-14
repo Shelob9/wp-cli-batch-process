@@ -2,10 +2,10 @@
 /**
  * WP Term Migration Functions
  *
- * @package WPTermMigration
+ * @package PluginNamespace
  */
 
-namespace WPTermMigration\Migration;
+namespace PluginNamespace\Migration;
 
 /**
  * Gets default results array.

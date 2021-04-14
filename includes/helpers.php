@@ -2,7 +2,7 @@
 /**
  * WP Term Migration Helpers
  *
- * @package WPTermMigration
+ * @package PluginNamespace
  */
 
-namespace WPTermMigration\Helpers;
+namespace PluginNamespace\Helpers;

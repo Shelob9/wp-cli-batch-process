@@ -2,12 +2,12 @@
 /**
  * WP Term Migration CLI commands
  *
- * @package WPTermMigration
+ * @package PluginNamespace
  */
 
-namespace WPTermMigration\Commands;
+namespace PluginNamespace\Commands;
 
-use WPTermMigration\Migration;
+use PluginNamespace\Migration;
 
 /**
  * Gets a namespaced function name.

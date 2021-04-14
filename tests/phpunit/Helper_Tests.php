@@ -1,9 +1,9 @@
 <?php // phpcs:ignore
 
-namespace WPTermMigration\Tests;
+namespace PluginNamespace\Tests;
 
-use WPTermMigration\Migration;
-use WPTermMigration\Helpers;
+use PluginNamespace\Migration;
+use PluginNamespace\Helpers;
 
 /**
  * Migration tests.

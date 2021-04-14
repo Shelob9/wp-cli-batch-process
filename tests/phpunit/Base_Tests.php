@@ -1,6 +1,6 @@
 <?php // phpcs:ignore
 
-namespace WPTermMigration\Tests;
+namespace PluginNamespace\Tests;
 
 /**
  * Base test class.

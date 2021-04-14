@@ -1,11 +1,11 @@
 {
-	"name": "petenelson/wp-cli-term-migration",
+	"name": "someone/plugin-name",
 	"description": "WordPress plugin with WP CLI commands to migrate taxonomy terms",
 	"type": "wordpress-plugin",
 	"license": "GPLv2 or later",
 	"authors": [
 		{
-			"name": "Pete Nelson",
+			"name": "Someone",
 			"email": "pete@petenelson.com"
 		}
 	],
