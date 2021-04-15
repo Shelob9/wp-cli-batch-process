@@ -26,3 +26,42 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
 	$processResult->success = $resultHandler->handle( $results );
 	return $processResult;
 }
+
+function processFromCsv( string $path, int $page, RecivesResults $resultHandler ) {
+
+}
+
+/**
+ * Get total rows, not including headers in a csv file.
+ * @param string $filePath Path to file, including extension.
+ */
+function getCsvSize( string $filePath ) : int {
+	$file = new \SplFileObject( $filePath, 'r' );
+	$file->seek( PHP_INT_MAX );
+	return $file->key();
+}
+
+/**
+ * Get a range of rows from a csv file.
+ * 
+ * @param string $filePath Path to file, including extension.
+ * @param int $start First row.
+ * @param int $end Last row.
+ */
+function getRowsFromCsv(string $filePath, int $start, int $end)
+{
+	$handle = fopen($filePath, "r");
+	$count = PluginNamespace\Helpers\getCsvSize($filePath);
+	$lineNumber = 0;
+	$rows = [];
+	while (($raw_string = fgets($handle)) !== false) {
+		if( $lineNumber >= $start  ){
+				$rows[] = str_getcsv($raw_string);
+		}
+		$lineNumber++;
+		if( $lineNumber > $end ){
+			break;
+		}
+	}
+	return $rows;
+}

@@ -9,4 +9,5 @@ class WP_Query {
     public function get_posts(){
         return [];
     }
+    public function parse_query(){}
 }
