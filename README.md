@@ -55,3 +55,18 @@ wp cli plugin-name run other_command
 - Lint
     - `composer lint`
     - `composer fix`
+
+### Integration Tests
+
+These tests are dependent on WordPress and MySQL and are run with phpunit. The unit tests do not have any of these dependencies.
+
+
+- Install tests with supplied docker-compose:
+    - Using [futureys/phpunit-wordpress-plugin](https://hub.docker.com/r/futureys/phpunit-wordpress-plugin)
+    - `docker-compose run phpunit`
+        - This puts you inside phpunit container with database setup.
+    - `composer install` # install for development inside of the container.
+    - Run tests 
+        - `composer test:wordpress`
+- If supplying your own test setup and database:
+    - `composer test:wordpress`

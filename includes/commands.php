@@ -80,7 +80,7 @@ function run_command( $args, $assoc_args = [] ) {
 	$argsProvider   = new QueryFromJson( $processor[0] );
 	$handler        = new $processor[1]();
 	$query          = new \WP_Query();
-	$processResults = PluginNamespace\Helpers::process(
+	$processResults = PluginNamespace\Helpers::processWithWpQuery(
 		$argsProvider,
 		$handler,
 		$query

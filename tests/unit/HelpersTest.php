@@ -24,7 +24,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 3;
-        $processResult = PluginNamespace\Helpers\process(
+        $processResult = PluginNamespace\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query
@@ -50,7 +50,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 2;
-        $processResult = PluginNamespace\Helpers\process(
+        $processResult = PluginNamespace\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query
@@ -77,7 +77,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 42;
-        $processResult = PluginNamespace\Helpers\process(
+        $processResult = PluginNamespace\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query
