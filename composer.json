@@ -23,8 +23,8 @@
 	},
 	"scripts": {
 		"test":"./vendor/bin/phpunit",
-		"lint": "./vendor/bin/phpcs ./includes ./tests/unit",
-		"fix":"./vendor/bin/phpcbf ./includes ./tests/unit",
+		"lint": ["./vendor/bin/phpcs ./includes", "./tests/unit"],
+		"fix":["./vendor/bin/phpcbf ./includes", "./vendor/bin/phpcbf ./tests/unit"],
 		"test:wordpress": "phpunit --config=phpunit-integration.xml"
 	}
 }
