@@ -10,6 +10,10 @@ namespace PluginNamespace\Helpers;
 use PluginNamespace\ProvidesQueryArgs;
 use PluginNamespace\RecivesResults;
 use PluginNamespace\ProcessResult;
+
+/**
+ * Handler for CLI commands that use WP_Query for input
+ */
 function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults $resultHandler, \WP_Query $query ):ProcessResult {
 	$args = $queryArgProvider->getArgs();
 	$query->parse_query(
@@ -27,7 +31,17 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
 	return $processResult;
 }
 
-function processFromCsv( string $path, int $page, RecivesResults $resultHandler ) {
+/**
+ * Handler for CLI commands that use CSV file as input.
+ */
+function processFromCsv( string $filePath, int $page, int $perPage, RecivesResults $resultHandler ) {
+	$total = getCsvSize($filePath);
+	$start = ($page * $perPage)+ 1;
+	$end = $start + ($page * $perPage);
+	$processResult = new ProcessResult( $end >= $total );
+	$rows = getRowsFromCsv($filePath,$start,$end);
+	$processResult->success = $resultHandler->handle( $rows );
+	return $processResult;
 
 }
 
@@ -51,7 +65,7 @@ function getCsvSize( string $filePath ) : int {
 function getRowsFromCsv(string $filePath, int $start, int $end)
 {
 	$handle = fopen($filePath, "r");
-	$count = PluginNamespace\Helpers\getCsvSize($filePath);
+	$count = getCsvSize($filePath);
 	$lineNumber = 0;
 	$rows = [];
 	while (($raw_string = fgets($handle)) !== false) {
@@ -59,9 +73,10 @@ function getRowsFromCsv(string $filePath, int $start, int $end)
 				$rows[] = str_getcsv($raw_string);
 		}
 		$lineNumber++;
-		if( $lineNumber > $end ){
+		if( $lineNumber === $end ){
 			break;
 		}
+
 	}
 	return $rows;
 }
