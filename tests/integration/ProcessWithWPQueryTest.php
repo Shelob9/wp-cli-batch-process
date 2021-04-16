@@ -54,5 +54,25 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
        $this->assertTrue( $processResult->success );
        $this->assertTrue($processResult->complete);
     }
+
+	public function testDeleteHandler(){
+		self::factory()->post->create_many(50,[
+            'post_type' => 'post'
+        ]);
+		
+		$query = new WP_Query([
+			 'post_type' => 'post',
+			 'per_page' => 10
+		]);
+		$handler = new WpCliBatchProcess\DeleteHandler();
+		$this->assertTrue($handler->handle($query->get_posts()));
+		$testQuery = new WP_Query([
+			 'post_type' => 'post',
+			 'paged' => 1,
+			 'posts_per_page' => 100
+		]);
+		$testQuery->get_posts();
+		$this->assertSame(40, $testQuery->post_count);
+	}
     
 }
