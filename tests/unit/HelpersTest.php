@@ -1,10 +1,10 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use PluginNamespace\Helpers;
-use PluginNamespace\ProvidesQueryArgs;
-use PluginNamespace\RecivesResults;
-use PluginNamespace\ProcessResult;
+use WpCliBatchProcess\Helpers;
+use WpCliBatchProcess\ProvidesQueryArgs;
+use WpCliBatchProcess\RecivesResults;
+use WpCliBatchProcess\ProcessResult;
 class HelpersTest extends TestCase {
     public function testSucessfulResult(){
         $argsProvider = new class implements ProvidesQueryArgs {
@@ -24,7 +24,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 3;
-        $processResult = PluginNamespace\Helpers\processWithWpQuery(
+        $processResult = WpCliBatchProcess\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query
@@ -50,7 +50,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 2;
-        $processResult = PluginNamespace\Helpers\processWithWpQuery(
+        $processResult = WpCliBatchProcess\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query
@@ -77,7 +77,7 @@ class HelpersTest extends TestCase {
         };
         $query = new \WP_Query();
         $query->max_num_pages = 42;
-        $processResult = PluginNamespace\Helpers\processWithWpQuery(
+        $processResult = WpCliBatchProcess\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query

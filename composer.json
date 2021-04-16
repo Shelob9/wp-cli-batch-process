@@ -1,6 +1,6 @@
 {
-	"name": "someone/plugin-name",
-	"description": "WordPress plugin with WP CLI commands to do soemthing",
+	"name": "someone/wp-cli-batch-process",
+	"description": "WordPress plugin to batch processes results from CSV for WP_Query",
 	"type": "wordpress-plugin",
 	"license": "GPLv2 or later",
 	"authors": [
@@ -18,7 +18,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-		  "PluginNamespace\\": "includes/classes/"
+		  "WpCliBatchProcess\\": "includes/classes/"
 		}
 	},
 	"scripts": {

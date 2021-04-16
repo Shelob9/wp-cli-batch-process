@@ -20,4 +20,4 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - .:/plugin
+      - .:/wp-cli-batch-process

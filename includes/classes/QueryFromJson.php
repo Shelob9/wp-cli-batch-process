@@ -1,5 +1,5 @@
 <?php
-namespace PluginNamespace;
+namespace WpCliBatchProcess;
 
 class QueryFromJson implements ProvidesQueryArgs {
 

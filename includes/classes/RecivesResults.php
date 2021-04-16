@@ -1,5 +1,5 @@
 <?php
-namespace PluginNamespace;
+namespace WpCliBatchProcess;
 
 interface RecivesResults {
 	public function handle( $results):bool;

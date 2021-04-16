@@ -1,8 +1,8 @@
 <?php
-namespace PluginNamespace\Commands;
+namespace WpCliBatchProcess\Commands;
 
-use PluginNamespace\QueryFromJson;
-use PluginNamespace\Helpers;
+use WpCliBatchProcess\QueryFromJson;
+use WpCliBatchProcess\Helpers;
 
 /**
  * Gets a namespaced function name.
@@ -20,8 +20,8 @@ function n( $function ) {
  * @return void
  */
 function add_commands() {
-	\WP_CLI::add_command( 'plugin-name run', n( 'run_command' ) );
-	\WP_CLI::add_command( 'plugin-name batch', n( 'run_batch_command' ) );
+	\WP_CLI::add_command( 'batch-process run', n( 'run_command' ) );
+	\WP_CLI::add_command( 'batch-process batch', n( 'run_batch_command' ) );
 }
 
 /**
@@ -40,7 +40,7 @@ function default_results() {
 
 function get_procesors() {
 	return apply_filters(
-		'plugin_name_get_processors',
+		'wp_cli_batch_process_get_processors',
 		[]
 	);
 }
@@ -138,7 +138,7 @@ function run_command( $args, $assoc_args = [] ) {
 			$argsProvider->setPage($page);
 			$handler        = new $processor['handler']();
 			$query          = new \WP_Query();
-			$processResults = PluginNamespace\Helpers::processWithWpQuery(
+			$processResults = WpCliBatchProcess\Helpers::processWithWpQuery(
 				$argsProvider,
 				$handler,
 				$query
@@ -146,7 +146,7 @@ function run_command( $args, $assoc_args = [] ) {
 			break;
 		case 'CSV':
 			$handler        = new $processor['handler']();
-			$processResults =  PluginNamespace\Helpers::processFromCsv(
+			$processResults =  WpCliBatchProcess\Helpers::processFromCsv(
 					$processor['source'],
 					$page,
 					$perPage,

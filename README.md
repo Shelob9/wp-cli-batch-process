@@ -1,4 +1,4 @@
-# WordPress CLI PLugin
+# WordPress CLI Batch Process
 
 WordPress plugin with wp commands to batch process posts. There are:
 
@@ -8,33 +8,33 @@ WordPress plugin with wp commands to batch process posts. There are:
 Commands can be run 1 page at a time:
 
 ```bash
-wp plugin-name run name_of_command
+wp batch-process run name_of_command
 # Optionally, set page and page size
-wp plugin-name run name_of_command --page=2 --perpage=10
+wp batch-process run name_of_command --page=2 --perpage=10
 
 ```
 
 Or as a batch:
 
 ```bash
-wp plugin-name batch name_of_command
-wp plugin-name batch name_of_command --perpage=50
+wp batch-process batch name_of_command
+wp batch-process batch name_of_command --perpage=50
 ```
 
 ## WP Query Commands
 
-Use the `plugin_name_get_processors` filter to register these commands. You should provide the path to a JSON file with an array of `WP_Query` arguments and a reference to a class that impliments `PluginNamespace\RecivesResults`.
+Use the `wp_cli_batch_process_get_processors` filter to register these commands. You should provide the path to a JSON file with an array of `WP_Query` arguments and a reference to a class that impliments `WpCliBatchProcess\RecivesResults`.
 
 ### JSON Args Paginated Delete
 
-To delete all found posts, use the `PluginNamespace::DeleteHandler` class.
+To delete all found posts, use the `WpCliBatchProcess::DeleteHandler` class.
 
 ```php
-add_filter( 'plugin_name_get_processors', function($processors){
+add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 	$processors['name_of_command'] = [
         'type' => 'WP_QUERY',
 		'source' => 'path/to/args.json',
-		'handler' => PluginNamespace::DeleteHandler
+		'handler' => WpCliBatchProcess::DeleteHandler
 	];
 	return $processors;
 });
@@ -44,8 +44,8 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "name_of_command", you can run this command with:
 
 ```bash
-wp plugin-name run name_of_command
-wp plugin-name run name_of_command --page=2 --perpage=50
+wp batch-process run name_of_command
+wp batch-process run name_of_command --page=2 --perpage=50
 ```
 
 ### JSON Args Some Other Handler
@@ -53,7 +53,7 @@ wp plugin-name run name_of_command --page=2 --perpage=50
 You can also write your own handler. Make sure to have a method called handle that returns true, unless there is an error, then it returns false.
 
 ```php
-use PluginNamespace\RecivesResults;
+use WpCliBatchProcess\RecivesResults;
 
 class YourHandler implements RecivesResults {
     public function handle($results): bool
@@ -62,7 +62,7 @@ class YourHandler implements RecivesResults {
         return true;//Return false if an error happened
     }
 }
-add_filter( 'plugin_name_get_processors', function($processors){
+add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 	$processors['other_command'] = [
         'type' => 'WP_Query',
 		'source' => 'path/to/args.json',
@@ -75,8 +75,8 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "other_command", you can run this command with:
 
 ```bash
-wp plugin-name run other_command
-wp plugin-name run other_command --page=2 --perpage=50
+wp batch-process run other_command
+wp batch-process run other_command --page=2 --perpage=50
 ```
 
 ## CSV Commands
@@ -84,11 +84,11 @@ wp plugin-name run other_command --page=2 --perpage=50
 ### Delete From A List Of Posts In CSV
 
 ```php
-add_filter( 'plugin_name_get_processors', function($processors){
+add_filter( 'wp_cli_batch_process_get_processors', function($processors){
     $processors['delete_something'] = [
             'type' => 'CSV',
             'source' => '/path/to/a.csv,'
-            'handler' => PluginNamespace::DeleteHandler
+            'handler' => WpCliBatchProcess::DeleteHandler
         ];
 	return $processors;
 });
@@ -98,8 +98,8 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "delete_something", you can run this command with:
 
 ```bash
-wp plugin-name run delete_something
-wp plugin-name run delete_something --page=2 --perpage=50
+wp batch-process run delete_something
+wp batch-process run delete_something --page=2 --perpage=50
 ```
 
 

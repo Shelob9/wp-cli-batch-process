@@ -1,5 +1,5 @@
 <?php
-namespace PluginNamespace;
+namespace WpCliBatchProcess;
 
 interface ProvidesQueryArgs {
 	public function getPage(): int;

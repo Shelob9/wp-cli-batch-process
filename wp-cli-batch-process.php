@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Plugin Name
+ * Plugin Name: WordPress CLI Batch Process
  * Description: 
  * Version:     0.1.0
  * Author:      
@@ -9,7 +9,7 @@
  * License:     GPLv2 or later
  * Text Domain: plugin-name
  *
- * @package  PluginNamespace
+ * @package  WpCliBatchProcess
  */
 
 
@@ -28,7 +28,7 @@ foreach ( $files as $file ) {
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	// Adds the migration CLI Commands.
-	\PluginNamespace\Commands\add_commands();
+	\WpCliBatchProcess\Commands\add_commands();
 }
 
-PluginNamespace\setUp();
+WpCliBatchProcess\setUp();

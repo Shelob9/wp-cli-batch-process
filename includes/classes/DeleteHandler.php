@@ -1,5 +1,5 @@
 <?php
-namespace PluginNamespace;
+namespace WpCliBatchProcess;
 
 class DeleteHandler implements RecivesResults {
 	public function handle( $results ): bool {

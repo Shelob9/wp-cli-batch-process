@@ -1,5 +1,5 @@
 <?php
-namespace PluginNamespace;
+namespace WpCliBatchProcess;
 
 class ProcessResult {
 	public $sucess;

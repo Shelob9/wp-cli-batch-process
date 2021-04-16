@@ -1,10 +1,10 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use PluginNamespace\Helpers;
-use PluginNamespace\ProvidesQueryArgs;
-use PluginNamespace\RecivesResults;
-use PluginNamespace\ProcessResult;
+use WpCliBatchProcess\Helpers;
+use WpCliBatchProcess\ProvidesQueryArgs;
+use WpCliBatchProcess\RecivesResults;
+use WpCliBatchProcess\ProcessResult;
 class ProcessWithWpQuery extends \WP_UnitTestCase {
 
     
@@ -36,7 +36,7 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
                 return true;
             }
         };
-        $processResult = PluginNamespace\Helpers\processWithWpQuery(
+        $processResult = WpCliBatchProcess\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             new \WP_Query()
@@ -45,7 +45,7 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
        $this->assertFalse($processResult->complete);
        $argsProvider->setPage(2);
        $query = new \WP_Query();
-       $processResult = PluginNamespace\Helpers\processWithWpQuery(
+       $processResult = WpCliBatchProcess\Helpers\processWithWpQuery(
             $argsProvider,  
             $handler,
             $query

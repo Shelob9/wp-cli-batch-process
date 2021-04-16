@@ -1,10 +1,10 @@
 <?php
 
-namespace PluginNamespace\Helpers;
+namespace WpCliBatchProcess\Helpers;
 
-use PluginNamespace\ProvidesQueryArgs;
-use PluginNamespace\RecivesResults;
-use PluginNamespace\ProcessResult;
+use WpCliBatchProcess\ProvidesQueryArgs;
+use WpCliBatchProcess\RecivesResults;
+use WpCliBatchProcess\ProcessResult;
 
 /**
  * Handler for CLI commands that use WP_Query for input
