@@ -21,7 +21,7 @@ function n( $function ) {
  */
 function add_commands() {
 	\WP_CLI::add_command( 'plugin-name run', n( 'run_command' ) );
-	\WP_CLI::add_command( 'plugin-name create-test-data', n( 'create_test_data' ) );
+	\WP_CLI::add_command( 'plugin-name batch', n( 'run_batch_command' ) );
 }
 
 /**
@@ -52,6 +52,17 @@ function get_processor( string $name ) {
 	}
 	return false;
 }
+
+function process_batch(string $processor_name, int $page, int $perPage){
+	$processResult = WP_CLI::runcommand( "plugin-name run $processor_name --page=$page --per-page=$perPage", $options );
+	if( ! $processResult->success ){
+		\WP_CLI::error( sprintf( 'Processor %s made an error on page %s', $processor_name, $page) );
+	}elseif( ! $processResult->completed ){
+		return process_batch($processor_name,$page + 1,$perPage);
+	}else{
+		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
+	}
+}
 /**
  *
  *
@@ -61,7 +72,46 @@ function get_processor( string $name ) {
  * <processor>
  * : name of processor
  *
- * [--optional-arg]
+ * [--perpage]
+ * : Desc
+ * 
+ * @param array $args       Positional args.
+ * @param array $assoc_args Associative args.
+ * @return void
+ */
+function run_batch_command(){
+	$processor_name = $args[0];
+	$results        = default_results();
+	$processor      = get_processor( $processor_name );
+	// phpcs:ignore
+	if ( ! $processor ) {
+		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
+	}
+	$perPage = (int)$args['perpage'] ? $args['perpage'] : 25;
+	$page = 1;
+	
+	$runCommandOptions =[
+		'return'     => true,   // Return 'STDOUT'; use 'all' for full object.
+		'parse'      => 'json', // Parse captured STDOUT to JSON array.
+		'launch'     => true,  // Reuse the current process.
+		'exit_error' => true,   // Halt script execution on error.
+	];
+	process_batch($processor_name,$page,$perPage);
+	
+}
+/**
+ *
+ *
+ *
+ * ## OPTIONS
+ *
+ * <processor>
+ * : name of processor
+ *
+ * [--perpage]
+ * : Desc
+ * 
+* [--page]
  * : Desc
  *
  * @param array $args       Positional args.
@@ -77,11 +127,11 @@ function run_command( $args, $assoc_args = [] ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 	}
 
-	//@todo this from args when making batchable
-	$page = 1;
-	$perPage = 25;
+	$page =(int)$args['page'] ? $args['page'] : 25;
+	$perPage =(int) $args['perpage'] ? $args['perpage'] : 25;
 
-	//@todo extract this switch to a function and test that function
+
+	//@todo extract this switch to a function and test
 	switch( $processor['type'] ){
 		case 'WP_Query':
 			$argsProvider   = new QueryFromJson( $processor['source'] );
@@ -114,18 +164,4 @@ function run_command( $args, $assoc_args = [] ) {
 	} else {
 		\WP_CLI::error( $results['error_code'] . ': ' . $results['error_message'] );
 	}
-}
-
-/**
- * Creates test data
- *
- * [--cleanup]
- * : Cleanup test data
- *
- * @param array $args       Positional args.
- * @param array $assoc_args Associative args.
- * @return void
- */
-function create_test_data( $args, $assoc_args = [] ) {
-	\WP_CLI::success( 'All Done' );
 }

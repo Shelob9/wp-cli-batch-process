@@ -1,11 +1,25 @@
 # WordPress CLI PLugin
 
-WordPress plugin with WP CLI commands to batch process posts. There are:
+WordPress plugin with wp commands to batch process posts. There are:
 
 - Commands whose input comes from WP_Query
 - Commands whose input comes from CSV files with ID and slug.
 
+Commands can be run 1 page at a time:
 
+```bash
+wp plugin-name run name_of_command
+# Optionally, set page and page size
+wp plugin-name run name_of_command --page=2 --perpage=10
+
+```
+
+Or as a batch:
+
+```bash
+wp plugin-name batch name_of_command
+wp plugin-name batch name_of_command --perpage=50
+```
 
 ## WP Query Commands
 
@@ -30,7 +44,8 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "name_of_command", you can run this command with:
 
 ```bash
-wp cli plugin-name run name_of_command
+wp plugin-name run name_of_command
+wp plugin-name run name_of_command --page=2 --perpage=50
 ```
 
 ### JSON Args Some Other Handler
@@ -60,7 +75,8 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "other_command", you can run this command with:
 
 ```bash
-wp cli plugin-name run other_command
+wp plugin-name run other_command
+wp plugin-name run other_command --page=2 --perpage=50
 ```
 
 ## CSV Commands
@@ -82,8 +98,11 @@ add_filter( 'plugin_name_get_processors', function($processors){
 Since this the index of used above is "delete_something", you can run this command with:
 
 ```bash
-wp cli plugin-name run delete_something
+wp plugin-name run delete_something
+wp plugin-name run delete_something --page=2 --perpage=50
 ```
+
+
 
 ## Development
 
