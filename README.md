@@ -79,12 +79,6 @@ Still Working on this.
     - `composer lint`
     - `composer fix`
 
-### Using Docker For WP CLI
-
-```sh
-docker-compose run cli wp --version
-```
-
 ### PHP Unit Tests
 
 These tests are located in `/tests/unit`
