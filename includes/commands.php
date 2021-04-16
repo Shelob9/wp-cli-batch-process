@@ -77,14 +77,36 @@ function run_command( $args, $assoc_args = [] ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 	}
 
-	$argsProvider   = new QueryFromJson( $processor[0] );
-	$handler        = new $processor[1]();
-	$query          = new \WP_Query();
-	$processResults = PluginNamespace\Helpers::processWithWpQuery(
-		$argsProvider,
-		$handler,
-		$query
-	);
+	//@todo this from args when making batchable
+	$page = 1;
+	$perPage = 25;
+
+	//@todo extract this switch to a function and test that function
+	switch( $processor['type'] ){
+		case 'WP_Query':
+			$argsProvider   = new QueryFromJson( $processor['source'] );
+			$argsProvider->setPage($page);
+			$handler        = new $processor['handler']();
+			$query          = new \WP_Query();
+			$processResults = PluginNamespace\Helpers::processWithWpQuery(
+				$argsProvider,
+				$handler,
+				$query
+			);
+			break;
+		case 'CSV':
+			$handler        = new $processor['handler']();
+			$processResults =  PluginNamespace\Helpers::processFromCsv(
+					$processor['source'],
+					$page,
+					$perPage,
+					$handler
+			);
+			break;
+			default: 
+			throw new \Exception( 'Invalid handler' );
+	}
+	
 
 	$results = array_merge( $results, $processResults->toArray() );
 	if ( $results['success'] ) {

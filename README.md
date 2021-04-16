@@ -18,8 +18,9 @@ To delete all found posts, use the `PluginNamespace::DeleteHandler` class.
 ```php
 add_filter( 'plugin_name_get_processors', function($processors){
 	$processors['name_of_command'] = [
-		'path/to/args.json',
-		PluginNamespace::DeleteHandler
+        'type' => 'WP_QUERY',
+		'source' => 'path/to/args.json',
+		'handler' => PluginNamespace::DeleteHandler
 	];
 	return $processors;
 });
@@ -48,8 +49,9 @@ class YourHandler implements RecivesResults {
 }
 add_filter( 'plugin_name_get_processors', function($processors){
 	$processors['other_command'] = [
-		'path/to/args.json',
-		YourNamespace::YourHandler
+        'type' => 'WP_Query',
+		'source' => 'path/to/args.json',
+		'handler' => YourNamespace::YourHandler
 	];
 	return $processors;
 });
@@ -63,8 +65,25 @@ wp cli plugin-name run other_command
 
 ## CSV Commands
 
-Still Working on this.
+### Delete From A List Of Posts In CSV
 
+```php
+add_filter( 'plugin_name_get_processors', function($processors){
+    $processors['delete_something'] = [
+            'type' => 'CSV',
+            'source' => '/path/to/a.csv,'
+            'handler' => PluginNamespace::DeleteHandler
+        ];
+	return $processors;
+});
+```
+
+
+Since this the index of used above is "delete_something", you can run this command with:
+
+```bash
+wp cli plugin-name run delete_something
+```
 
 ## Development
 

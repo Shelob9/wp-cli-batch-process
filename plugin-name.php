@@ -12,18 +12,18 @@
  * @package  PluginNamespace
  */
 
-namespace PluginNamespace;
 
-define( 'PLUGIN_NAME_MIGRATION_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
-define( 'PLUGIN_NAME_MIGRATION_VERSION', '0.1.0' );
+define( 'PLUGIN_NAME_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
+define( 'PLUGIN_NAME_VERSION', '0.1.0' );
 
 $files = [
 	'helpers.php',
 	'commands.php',
+	'core.php'
 ];
 
 foreach ( $files as $file ) {
-	require_once PLUGIN_NAME_MIGRATION_PATH . 'includes/' . $file;
+	require_once PLUGIN_NAME_PATH . 'includes/' . $file;
 }
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -31,10 +31,4 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	\PluginNamespace\Commands\add_commands();
 }
 
-add_filter( 'plugin_name_get_processors', function($processors){
-	$processors['delete-all-draft-products'] = [
-		__DIR__ . '/all-draft-products.json',
-		PluginNamespace::DeleteHandler
-	];
-	return $processors;
-});
+PluginNamespace\setUp();
