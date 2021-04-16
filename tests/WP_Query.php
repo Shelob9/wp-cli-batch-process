@@ -1,5 +1,8 @@
 <?php
 
+/**
+Mock for testing
+**/
 class WP_Query {
     public $found_posts = 0;
 	public $max_num_pages = 0;
