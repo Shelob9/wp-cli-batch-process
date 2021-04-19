@@ -53,13 +53,18 @@ function get_processor( string $name ) {
 }
 
 function process_batch( string $processor_name, int $page, int $perPage, array $options ) {
-	$processResult = WP_CLI::runcommand( "plugin-name run $processor_name --page=$page --per-page=$perPage", $options );
-	if ( ! $processResult->success ) {
-		\WP_CLI::error( sprintf( 'Processor %s made an error on page %s', $processor_name, $page ) );
-	} elseif ( ! $processResult->completed ) {
+	\WP_CLI::line( sprintf('Staring page %d',$page));
+	$commandResult = \WP_CLI::launch_self( 
+		"batch-process run $processor_name --page=$page --per-page=$perPage --exitOnComplete=true",
+		 $options,
+	);
+
+	if ( ! $commandResult ) {
 		return process_batch( $processor_name, $page + 1, $perPage, $options );
 	} else {
-		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
+		\WP_CLI::success( 
+			__( 'Success', 'wp-cli-plugin-name' )
+		);
 	}
 }
 /**
@@ -110,10 +115,13 @@ function run_batch_command( $args, $assoc_args = [] ) {
  * : name of processor
  *
  * [--perpage]
- * : Desc
+ * : Posts per page of query
  *
  * [--page]
- * : Desc
+ * : Page of query
+ * 
+ * [--exitOnComplete]
+ * : Return error when completed if true. Default is false.
  *
  * @param array $args       Positional args.
  * @param array $assoc_args Associative args.
@@ -126,20 +134,32 @@ function run_command( $args, $assoc_args = [] ) {
 	// phpcs:ignore
 	if ( ! $processor ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
+		return;
 	}
-
-	$page           = (int) $args['page'] ? $args['page'] : 25;
-	$perPage        = (int) $args['perpage'] ? $args['perpage'] : 25;
-	$processResults = \WpCliBatchProcess\Helpers\processRun(
-		$page,
-		$perPage,
-		$processor
-	);
+	$page           = isset($args['page']) ? (int)$args['page'] : 1;
+	$perPage        = isset($args['perpage']) ? (int)$args['perpage'] : 25;
+	$exitOnComplete        = isset($args['exitOnComplete']) ?
+		(bool) $args['exitOnComplete'] : false; 
+	try {
+		$processResults = \WpCliBatchProcess\Helpers\processRun(
+			$page,
+			$perPage,
+			$processor
+		);
+		
+	} catch (\Throwable $th) {
+		 \WP_CLI::error( $th->__toString() );
+		 return;
+	}
+	
 
 	$results = array_merge( $results, $processResults->toArray() );
 	// @todo deal with typo in ProcessResults
 	if ( $results['success'] || $results['sucess'] ) {
 		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
+		if( $exitOnComplete && $processResults->complete ){
+			\WP_CLI::error( 'Completed' );
+		}
 	} else {
 		\WP_CLI::error( $results['error_code'] . ': ' . $results['error_message'] );
 	}

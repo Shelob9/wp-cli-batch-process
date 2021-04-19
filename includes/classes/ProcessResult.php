@@ -12,6 +12,7 @@ class ProcessResult {
 	public function toArray():array {
 		return [
 			'sucess'   => isset( $this->sucess ) ? $this->sucess : false,
+			'success' => isset( $this->sucess ) ? $this->sucess : false,
 			'complete' => $this->complete,
 		];
 	}

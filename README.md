@@ -17,7 +17,7 @@ wp batch-process batch delete-sample-content
 ### Delete All Published Pages
 
 ```bash
-wp batch-process batch delete-all-published
+wp batch-process batch delete-published-pages
 ```
 
 ## Command Types
@@ -154,3 +154,11 @@ These tests are located in `/tests/integration`
         - `composer test:wordpress`
 - If supplying your own test setup and database:
     - `composer test:wordpress`
+
+### Practial Test
+
+```bash
+10updocker wp post generate --count=100 --post_status=publish --post_type=page --post_date=1999-01-04
+10updocker wp batch-process batch delete-published-pages
+10updocker wp post list --post_type=page --format=ids
+```

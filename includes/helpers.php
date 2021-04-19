@@ -12,19 +12,12 @@ use WpCliBatchProcess\QueryFromJson;
  * Handler for CLI commands that use WP_Query for input
  */
 function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults $resultHandler, \WP_Query $query ):ProcessResult {
-	$args = $queryArgProvider->getArgs();
 	$query->parse_query(
-		array_merge(
-			$args,
-			[
-				'paged' => $queryArgProvider->getPage(),
-			]
-		)
+		$queryArgProvider->getArgs()
 	);
-
 	$results                = $query->get_posts();
 	$processResult          = new ProcessResult( $query->max_num_pages <= $queryArgProvider->getPage() );
-	$processResult->success = $resultHandler->handle( $results );
+	$processResult->sucess = $resultHandler->handle( $results );
 	return $processResult;
 }
 
@@ -37,7 +30,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
 	$end                    = $start + ( $page * $perPage );
 	$processResult          = new ProcessResult( $end >= $total );
 	$rows                   = getRowsFromCsv( $filePath, $start, $end );
-	$processResult->success = $resultHandler->handle( $rows );
+	$processResult->sucess = $resultHandler->handle( $rows );
 	return $processResult;
 
 }
@@ -84,8 +77,10 @@ function processRun( int $page, int $perPage, array $processor ) {
 			'WpCliBatchProcess::DeleteHandler',
 		]
 	) ? new DeleteHandler() : new $processor['handler']();
-	// @todo extract this switch to a function and test
+	
+	
 	switch ( $processor['type'] ) {
+		case 'WP_QUERY':
 		case 'WP_Query':
 			$argsProvider = new QueryFromJson( $processor['source'] );
 			$argsProvider->setPage( $page );
