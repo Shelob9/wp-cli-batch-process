@@ -21,6 +21,16 @@ wp batch-process batch name_of_command
 wp batch-process batch name_of_command --perpage=50
 ```
 
+## Built In Commands
+
+### Delete Sample Content
+
+Example of CSV command.
+
+```bash
+wp batch-process batch delete-sample-content
+```
+
 ## WP Query Commands
 
 Use the `wp_cli_batch_process_get_processors` filter to register these commands. You should provide the path to a JSON file with an array of `WP_Query` arguments and a reference to a class that impliments `WpCliBatchProcess\RecivesResults`.

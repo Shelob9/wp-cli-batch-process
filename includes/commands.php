@@ -1,6 +1,7 @@
 <?php
 namespace WpCliBatchProcess\Commands;
 
+use WpCliBatchProcess\DeleteHandler;
 use WpCliBatchProcess\QueryFromJson;
 use WpCliBatchProcess\Helpers;
 
@@ -38,27 +39,25 @@ function default_results() {
 	];
 }
 
-function get_procesors() {
-	return apply_filters(
+
+
+function get_processor( string $name ) {
+	$processors = apply_filters(
 		'wp_cli_batch_process_get_processors',
 		[]
 	);
-}
-
-function get_processor( string $name ) {
-	$processors = get_processor();
 	if ( isset( $processors[ $name ] ) ) {
 		return $processors[ $name ];
 	}
 	return false;
 }
 
-function process_batch(string $processor_name, int $page, int $perPage){
+function process_batch(string $processor_name, int $page, int $perPage,array $options){
 	$processResult = WP_CLI::runcommand( "plugin-name run $processor_name --page=$page --per-page=$perPage", $options );
 	if( ! $processResult->success ){
 		\WP_CLI::error( sprintf( 'Processor %s made an error on page %s', $processor_name, $page) );
 	}elseif( ! $processResult->completed ){
-		return process_batch($processor_name,$page + 1,$perPage);
+		return process_batch($processor_name,$page + 1,$perPage,$options);
 	}else{
 		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
 	}
@@ -79,7 +78,8 @@ function process_batch(string $processor_name, int $page, int $perPage){
  * @param array $assoc_args Associative args.
  * @return void
  */
-function run_batch_command(){
+function run_batch_command($args, $assoc_args = []){
+	
 	$processor_name = $args[0];
 	$results        = default_results();
 	$processor      = get_processor( $processor_name );
@@ -96,7 +96,8 @@ function run_batch_command(){
 		'launch'     => true,  // Reuse the current process.
 		'exit_error' => true,   // Halt script execution on error.
 	];
-	process_batch($processor_name,$page,$perPage);
+	//Process recurisvely until complete or error
+	process_batch($processor_name,$page,$perPage,$runCommandOptions);
 	
 }
 /**
@@ -130,23 +131,26 @@ function run_command( $args, $assoc_args = [] ) {
 	$page =(int)$args['page'] ? $args['page'] : 25;
 	$perPage =(int) $args['perpage'] ? $args['perpage'] : 25;
 
-
+	$handler = is_string($processor['handler']) && in_array(
+		$processor['handler'],
+		[
+			'WpCliBatchProcess::DeleteHandler'
+		]
+	) ? new DeleteHandler() : new $processor['handler']();
 	//@todo extract this switch to a function and test
 	switch( $processor['type'] ){
 		case 'WP_Query':
 			$argsProvider   = new QueryFromJson( $processor['source'] );
 			$argsProvider->setPage($page);
-			$handler        = new $processor['handler']();
 			$query          = new \WP_Query();
-			$processResults = WpCliBatchProcess\Helpers::processWithWpQuery(
+			$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
 				$argsProvider,
 				$handler,
 				$query
 			);
 			break;
 		case 'CSV':
-			$handler        = new $processor['handler']();
-			$processResults =  WpCliBatchProcess\Helpers::processFromCsv(
+			$processResults =  \WpCliBatchProcess\Helpers\processFromCsv(
 					$processor['source'],
 					$page,
 					$perPage,
@@ -159,7 +163,8 @@ function run_command( $args, $assoc_args = [] ) {
 	
 
 	$results = array_merge( $results, $processResults->toArray() );
-	if ( $results['success'] ) {
+	//@todo deal with typo in ProcessResults
+	if ( $results['success'] || $results['sucess'] ) {
 		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
 	} else {
 		\WP_CLI::error( $results['error_code'] . ': ' . $results['error_message'] );

@@ -9,13 +9,12 @@
  * License:     GPLv2 or later
  * Text Domain: plugin-name
  *
- * @package  WpCliBatchProcess
  */
-
 
 define( 'PLUGIN_NAME_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'PLUGIN_NAME_VERSION', '0.1.0' );
 
+require_once PLUGIN_NAME_PATH . '/vendor/autoload.php';
 $files = [
 	'helpers.php',
 	'commands.php',
@@ -26,9 +25,8 @@ foreach ( $files as $file ) {
 	require_once PLUGIN_NAME_PATH . 'includes/' . $file;
 }
 
+\WpCliBatchProcess\setup();
+// Add the CLI Commands.
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	// Adds the migration CLI Commands.
 	\WpCliBatchProcess\Commands\add_commands();
 }
-
-WpCliBatchProcess\setUp();
