@@ -32,7 +32,7 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
             $handler,
             new \WP_Query()
        );
-       $this->assertTrue( $processResult->success );
+       $this->assertTrue( $processResult->wasSuccess() );
        $this->assertFalse($processResult->complete);
        $argsProvider->setPage(2);
        $query = new \WP_Query();
@@ -42,7 +42,7 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
             $query
         );
        
-       $this->assertTrue( $processResult->success );
+       $this->assertTrue( $processResult->wasSuccess() );
        $this->assertTrue($processResult->complete);
     }
 
