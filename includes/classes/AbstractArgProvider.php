@@ -5,14 +5,14 @@ abstract class AbstractArgProvider implements ProvidesQueryArgs {
 
 	protected $page;
 	protected $perPage;
-	
+
 	/**
 	 * Get current page
 	 *
 	 * @return integer
 	 */
-	public function getPage():int{
-		return isset($this->page) ? $this->page : 1;
+	public function getPage():int {
+		return isset( $this->page ) ? $this->page : 1;
 	}
 	/**
 	 * Set current page
@@ -45,20 +45,20 @@ abstract class AbstractArgProvider implements ProvidesQueryArgs {
 		return $this->perPage;
 	}
 
-	public function mergeArgs($args = []): array
-	{
-		if( ! empty($args)){
-			return array_merge($args,
+	public function mergeArgs( $args = [] ): array {
+		if ( ! empty( $args ) ) {
+			return array_merge(
+				$args,
 				[
-					'paged' => $this->getPage(),
-					'posts_per_page' => 	$this->getPerPage(),
+					'paged'          => $this->getPage(),
+					'posts_per_page' => $this->getPerPage(),
 				]
 			);
 		}
 		return [
-			'paged' => $this->getPage(),
-			'posts_per_page' => 	$this->getPerPage(),
+			'paged'          => $this->getPage(),
+			'posts_per_page' => $this->getPerPage(),
 		];
 	}
-	
+
 }

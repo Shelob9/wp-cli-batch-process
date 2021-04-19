@@ -32,11 +32,11 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
  * Handler for CLI commands that use CSV file as input.
  */
 function processFromCsv( string $filePath, int $page, int $perPage, RecivesResults $resultHandler ) {
-	$total = getCsvSize($filePath);
-	$start = ($page * $perPage)+ 1;
-	$end = $start + ($page * $perPage);
-	$processResult = new ProcessResult( $end >= $total );
-	$rows = getRowsFromCsv($filePath,$start,$end);
+	$total                  = getCsvSize( $filePath );
+	$start                  = ( $page * $perPage ) + 1;
+	$end                    = $start + ( $page * $perPage );
+	$processResult          = new ProcessResult( $end >= $total );
+	$rows                   = getRowsFromCsv( $filePath, $start, $end );
 	$processResult->success = $resultHandler->handle( $rows );
 	return $processResult;
 
@@ -44,6 +44,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
 
 /**
  * Get total rows, not including headers in a csv file.
+ *
  * @param string $filePath Path to file, including extension.
  */
 function getCsvSize( string $filePath ) : int {
@@ -54,44 +55,41 @@ function getCsvSize( string $filePath ) : int {
 
 /**
  * Get a range of rows from a csv file.
- * 
+ *
  * @param string $filePath Path to file, including extension.
- * @param int $start First row.
- * @param int $end Last row.
+ * @param int    $start First row.
+ * @param int    $end Last row.
  */
-function getRowsFromCsv(string $filePath, int $start, int $end)
-{
-	$handle = fopen($filePath, "r");
-	$count = getCsvSize($filePath);
+function getRowsFromCsv( string $filePath, int $start, int $end ) {
+	$handle     = fopen( $filePath, 'r' );
+	$count      = getCsvSize( $filePath );
 	$lineNumber = 0;
-	$rows = [];
-	while (($raw_string = fgets($handle)) !== false) {
-		if( $lineNumber >= $start  ){
-				$rows[] = str_getcsv($raw_string);
+	$rows       = [];
+	while ( ( $raw_string = fgets( $handle ) ) !== false ) {
+		if ( $lineNumber >= $start ) {
+				$rows[] = str_getcsv( $raw_string );
 		}
 		$lineNumber++;
-		if( $lineNumber === $end ){
+		if ( $lineNumber === $end ) {
 			break;
 		}
-
 	}
 	return $rows;
 }
 
-function processRun(int $page,int $perPage, array $processor)
-{
-	$handler = is_string($processor['handler']) && in_array(
+function processRun( int $page, int $perPage, array $processor ) {
+	$handler = is_string( $processor['handler'] ) && in_array(
 		$processor['handler'],
 		[
-			'WpCliBatchProcess::DeleteHandler'
+			'WpCliBatchProcess::DeleteHandler',
 		]
 	) ? new DeleteHandler() : new $processor['handler']();
-	//@todo extract this switch to a function and test
-	switch( $processor['type'] ){
+	// @todo extract this switch to a function and test
+	switch ( $processor['type'] ) {
 		case 'WP_Query':
-			$argsProvider   = new QueryFromJson( $processor['source'] );
-			$argsProvider->setPage($page);
-			$argsProvider->setPerPage($perPage);
+			$argsProvider = new QueryFromJson( $processor['source'] );
+			$argsProvider->setPage( $page );
+			$argsProvider->setPerPage( $perPage );
 			$query          = new \WP_Query();
 			$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
 				$argsProvider,
@@ -100,14 +98,14 @@ function processRun(int $page,int $perPage, array $processor)
 			);
 			break;
 		case 'CSV':
-			$processResults =  \WpCliBatchProcess\Helpers\processFromCsv(
-					$processor['source'],
-					$page,
-					$perPage,
-					$handler
+			$processResults = \WpCliBatchProcess\Helpers\processFromCsv(
+				$processor['source'],
+				$page,
+				$perPage,
+				$handler
 			);
 			break;
-			default: 
+		default:
 			throw new \Exception( 'Invalid processor' );
 	}
 	return $processResults;
