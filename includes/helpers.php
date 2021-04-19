@@ -91,6 +91,7 @@ function processRun(int $page,int $perPage, array $processor)
 		case 'WP_Query':
 			$argsProvider   = new QueryFromJson( $processor['source'] );
 			$argsProvider->setPage($page);
+			$argsProvider->setPerPage($perPage);
 			$query          = new \WP_Query();
 			$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
 				$argsProvider,

@@ -44,5 +44,21 @@ abstract class AbstractArgProvider implements ProvidesQueryArgs {
 		$this->perPage = $perPage;
 		return $this->perPage;
 	}
+
+	public function mergeArgs($args = []): array
+	{
+		if( ! empty($args)){
+			return array_merge($args,
+				[
+					'paged' => $this->getPage(),
+					'posts_per_page' => 	$this->getPerPage(),
+				]
+			);
+		}
+		return [
+			'paged' => $this->getPage(),
+			'posts_per_page' => 	$this->getPerPage(),
+		];
+	}
 	
 }

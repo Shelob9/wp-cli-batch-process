@@ -15,9 +15,10 @@ class QueryFromJson extends AbstractArgProvider {
 	}
 	
 	public function getArgs(): array {
-		return json_decode(
+		$args = json_decode(
 			file_get_contents( $this->path ),
 			true
 		);
+		return $this->mergeArgs($args);
 	}
 }
