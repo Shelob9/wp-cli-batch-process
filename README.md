@@ -2,6 +2,20 @@
 
 WordPress plugin with wp commands to batch process posts. There are:
 
+-[![PHP Unit Tests](https://github.com/Shelob9/wp-cli-batch-process/actions/workflows/php-unit.yml/badge.svg)](https://github.com/Shelob9/wp-cli-batch-process/actions/workflows/php-unit.yml)
+[![WordPress Tests](https://github.com/Shelob9/wp-cli-batch-process/actions/workflows/wordpress.yml/badge.svg)](https://github.com/Shelob9/wp-cli-batch-process/actions/workflows/wordpress.yml)
+
+## Comands
+
+Delete Sample Content
+
+
+```bash
+wp batch-process batch delete-sample-content
+```
+
+## Command Types
+
 - Commands whose input comes from WP_Query
 - Commands whose input comes from CSV files with ID and slug.
 
@@ -21,21 +35,11 @@ wp batch-process batch name_of_command
 wp batch-process batch name_of_command --perpage=50
 ```
 
-## Built In Commands
-
-### Delete Sample Content
-
-Example of CSV command.
-
-```bash
-wp batch-process batch delete-sample-content
-```
-
-## WP Query Commands
+### WP Query Commands
 
 Use the `wp_cli_batch_process_get_processors` filter to register these commands. You should provide the path to a JSON file with an array of `WP_Query` arguments and a reference to a class that impliments `WpCliBatchProcess\RecivesResults`.
 
-### JSON Args Paginated Delete
+#### Example: Paginated Delete
 
 To delete all found posts, use the `WpCliBatchProcess::DeleteHandler` class.
 
@@ -44,7 +48,7 @@ add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 	$processors['name_of_command'] = [
         'type' => 'WP_QUERY',
 		'source' => 'path/to/args.json',
-		'handler' => WpCliBatchProcess::DeleteHandler
+		'handler' => 'WpCliBatchProcess::DeleteHandler'
 	];
 	return $processors;
 });
@@ -58,7 +62,7 @@ wp batch-process run name_of_command
 wp batch-process run name_of_command --page=2 --perpage=50
 ```
 
-### JSON Args Some Other Handler
+#### Example: Some Other Handler
 
 You can also write your own handler. Make sure to have a method called handle that returns true, unless there is an error, then it returns false.
 
@@ -89,9 +93,9 @@ wp batch-process run other_command
 wp batch-process run other_command --page=2 --perpage=50
 ```
 
-## CSV Commands
+### CSV Commands
 
-### Delete From A List Of Posts In CSV
+#### Example Delete From A List Of Posts In CSV
 
 ```php
 add_filter( 'wp_cli_batch_process_get_processors', function($processors){
@@ -111,8 +115,6 @@ Since this the index of used above is "delete_something", you can run this comma
 wp batch-process run delete_something
 wp batch-process run delete_something --page=2 --perpage=50
 ```
-
-
 
 ## Development
 
