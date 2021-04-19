@@ -7,11 +7,17 @@ WordPress plugin with wp commands to batch process posts. There are:
 
 ## Comands
 
-Delete Sample Content
+### Delete Sample Content
 
 
 ```bash
 wp batch-process batch delete-sample-content
+```
+
+### Delete All Published Pages
+
+```bash
+wp batch-process batch delete-all-published
 ```
 
 ## Command Types

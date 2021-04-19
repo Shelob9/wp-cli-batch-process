@@ -17,6 +17,11 @@ function setUp(){
             'source' => $processorsDir .'hello-world.csv',
             'handler' => 'WpCliBatchProcess::DeleteHandler'
         ];
+		$processors['delete-published-pages'] = [
+            'type' => 'WP_QUERY',
+            'source' => $processorsDir .'delete-published-pages.json',
+            'handler' => 'WpCliBatchProcess::DeleteHandler'
+        ];
         return $processors;
     });
 }
