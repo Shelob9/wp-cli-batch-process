@@ -1,17 +1,18 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use WpCliBatchProcess\AbstractArgProvider;
 use WpCliBatchProcess\Helpers;
 use WpCliBatchProcess\ProvidesQueryArgs;
 use WpCliBatchProcess\RecivesResults;
 use WpCliBatchProcess\ProcessResult;
 class HelpersTest extends TestCase {
     public function testSucessfulResult(){
-        $argsProvider = new class implements ProvidesQueryArgs {
+        $argsProvider = new class extends AbstractArgProvider {
             public function getPage():int{
                 return 2;
             }
-            public function setPage(int $page): int{}
+      
             public function getArgs(): array{
                 return [];
             }
@@ -33,11 +34,10 @@ class HelpersTest extends TestCase {
        $this->assertFalse($processResult->complete );
     }
     public function testCompleteResult(){
-        $argsProvider = new class implements ProvidesQueryArgs {
+        $argsProvider = new class extends AbstractArgProvider {
             public function getPage():int{
                 return 2;
             }
-            public function setPage(int $page): int{}
             public function getArgs(): array{
                 return [];
             }
@@ -60,11 +60,11 @@ class HelpersTest extends TestCase {
     }
 
     public function testFailedResult(){
-        $argsProvider = new class implements ProvidesQueryArgs {
+        $argsProvider = new class extends AbstractArgProvider {
             public function getPage():int{
                 return 2;
             }
-            public function setPage(int $page): int{}
+            
             public function getArgs(): array{
                 return [];
             }

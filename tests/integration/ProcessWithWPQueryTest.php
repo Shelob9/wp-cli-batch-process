@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use WpCliBatchProcess\AbstractArgProvider;
 use WpCliBatchProcess\Helpers;
 use WpCliBatchProcess\ProvidesQueryArgs;
 use WpCliBatchProcess\RecivesResults;
@@ -12,15 +13,7 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
             'post_type' => 'post'
         ]);
        
-        $argsProvider = new class implements ProvidesQueryArgs {
-            public $page;
-            public function getPage():int{
-                return isset($this->page) ? $this->page : 1;
-            }
-            public function setPage(int $page): int{
-                $this->page = $page;
-                return $this->page;;
-            }
+        $argsProvider = new class extends AbstractArgProvider {
             public function getArgs(): array{
                 return [
                     'post_type' => 'post',
