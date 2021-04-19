@@ -92,8 +92,6 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
 			 'post_status' => 'publish'
 		]);
 		$testQuery->get_posts();
-
-		$this->markTestSkipped('Need to fix pagination');
 		$this->assertSame(25, $testQuery->post_count);
 
 		//Were NO draft posts deleted?
@@ -106,7 +104,19 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
 		$testQuery->get_posts();
 		$this->assertSame(50, $testQuery->post_count);
 
+		\WpCliBatchProcess\Helpers\processRun(
+			1,15,$processor
+		);
+		//Were 15 more published pages deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'page',
+			 'paged' => 1,
+			 'posts_per_page' => 100,
+			 'post_status' => 'publish'
+		]);
 		
+		$testQuery->get_posts();
+		$this->assertSame(10, $testQuery->post_count);
 	}
     
 }
