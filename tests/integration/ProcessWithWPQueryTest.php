@@ -7,9 +7,7 @@ use WpCliBatchProcess\RecivesResults;
 use WpCliBatchProcess\ProcessResult;
 class ProcessWithWpQuery extends \WP_UnitTestCase {
 
-    
     public function testProcessor(){
-        
         self::factory()->post->create_many(50,[
             'post_type' => 'post'
         ]);
@@ -73,6 +71,49 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
 		]);
 		$testQuery->get_posts();
 		$this->assertSame(40, $testQuery->post_count);
+	}
+
+	public function testQueryRun()
+	{
+		self::factory()->post->create_many(50,[
+            'post_type' => 'page',
+			'post_status' => 'publish'
+        ]);
+		self::factory()->post->create_many(50,[
+            'post_type' => 'page',
+			'post_status' => 'draft'
+        ]);
+		$processor = [
+        	'type' => 'WP_Query',
+			'source' => __DIR__ .'/delete-pages.json',
+			'handler' => 'WpCliBatchProcess::DeleteHandler'
+		];
+		\WpCliBatchProcess\Helpers\processRun(
+			1,25,$processor
+		);
+		//Were 25 published pages deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'page',
+			 'paged' => 1,
+			 'posts_per_page' => 100,
+			 'post_status' => 'publish'
+		]);
+		$testQuery->get_posts();
+
+		$this->markTestSkipped('Need to fix pagination');
+		$this->assertSame(25, $testQuery->post_count);
+
+		//Were NO draft posts deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'page',
+			 'paged' => 1,
+			 'posts_per_page' => 100,
+			 'post_status' => 'draft'
+		]);
+		$testQuery->get_posts();
+		$this->assertSame(50, $testQuery->post_count);
+
+		
 	}
     
 }

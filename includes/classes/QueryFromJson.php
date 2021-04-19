@@ -17,9 +17,9 @@ class QueryFromJson implements ProvidesQueryArgs {
 		return $this->page;
 	}
 	public function getArgs(): array {
-			return json_decode(
-				file_get_contents( $this->path ),
-				true
-			)
+		return json_decode(
+			file_get_contents( $this->path ),
+			true
+		);
 	}
 }

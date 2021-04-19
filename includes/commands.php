@@ -130,37 +130,9 @@ function run_command( $args, $assoc_args = [] ) {
 
 	$page =(int)$args['page'] ? $args['page'] : 25;
 	$perPage =(int) $args['perpage'] ? $args['perpage'] : 25;
-
-	$handler = is_string($processor['handler']) && in_array(
-		$processor['handler'],
-		[
-			'WpCliBatchProcess::DeleteHandler'
-		]
-	) ? new DeleteHandler() : new $processor['handler']();
-	//@todo extract this switch to a function and test
-	switch( $processor['type'] ){
-		case 'WP_Query':
-			$argsProvider   = new QueryFromJson( $processor['source'] );
-			$argsProvider->setPage($page);
-			$query          = new \WP_Query();
-			$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
-				$argsProvider,
-				$handler,
-				$query
-			);
-			break;
-		case 'CSV':
-			$processResults =  \WpCliBatchProcess\Helpers\processFromCsv(
-					$processor['source'],
-					$page,
-					$perPage,
-					$handler
-			);
-			break;
-			default: 
-			throw new \Exception( 'Invalid handler' );
-	}
-	
+	$processResults = \WpCliBatchProcess\Helpers\processRun(
+		$page,$perPage,$processor
+	);
 
 	$results = array_merge( $results, $processResults->toArray() );
 	//@todo deal with typo in ProcessResults

@@ -1,4 +1,3 @@
 {
-    "post_type" : "products",
-    "post_status": "draft"
+    "post_type" : "page"
 }

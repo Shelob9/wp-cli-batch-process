@@ -103,7 +103,7 @@ add_filter( 'wp_cli_batch_process_get_processors', function($processors){
             'type' => 'CSV',
             'source' => '/path/to/a.csv,'
             'handler' => WpCliBatchProcess::DeleteHandler
-        ];
+	];
 	return $processors;
 });
 ```
