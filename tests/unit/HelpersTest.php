@@ -30,7 +30,7 @@ class HelpersTest extends TestCase {
             $handler,
             $query
        );
-       $this->assertTrue( $processResult->success );
+       $this->assertTrue( $processResult->wasSuccess() );
        $this->assertFalse($processResult->complete );
     }
     public function testCompleteResult(){
@@ -55,7 +55,7 @@ class HelpersTest extends TestCase {
             $handler,
             $query
        );
-       $this->assertTrue( $processResult->success );
+       $this->assertTrue( $processResult->wasSuccess() );
        $this->assertTrue( $processResult->complete );
     }
 
@@ -82,6 +82,6 @@ class HelpersTest extends TestCase {
             $handler,
             $query
        );
-       $this->assertFalse( $processResult->success );
+       $this->assertFalse( $processResult->wasSuccess() );
     }
 }

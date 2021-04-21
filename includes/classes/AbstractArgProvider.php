@@ -31,7 +31,7 @@ abstract class AbstractArgProvider implements ProvidesQueryArgs {
 	 * @return integer
 	 */
 	public function getPerPage(): int {
-		return $this->perPage;
+		return isset( $this->perPage ) ? $this->perPage : 25;
 	}
 
 	/**
@@ -56,5 +56,6 @@ abstract class AbstractArgProvider implements ProvidesQueryArgs {
 			'posts_per_page' => $this->getPerPage(),
 		];
 	}
+
 
 }

@@ -16,9 +16,29 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
 		$queryArgProvider->getArgs()
 	);
 	$results                = $query->get_posts();
-	$processResult          = new ProcessResult( $query->max_num_pages <= $queryArgProvider->getPage() );
-	$processResult->sucess = $resultHandler->handle( $results );
+	$processResult          = new ProcessResult( 				$query->max_num_pages <= $queryArgProvider->getPage() 
+	);
+	$processResult->success = $resultHandler->handle( $results );
 	return $processResult;
+}
+
+/**
+ * Handler for CLI commands that use WP_Query and delete
+ */
+function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, RecivesResults $resultHandler, \WP_Query $query ):ProcessResult {
+	$args = $queryArgProvider->getArgs();
+	$args['paged'] = 1;//always 1 for deletes
+	$query->parse_query(
+		$args
+	);
+	$results                = $query->get_posts();
+	$processResult          = new ProcessResult( 
+		//Delete until on last page
+		$query->max_num_pages == 1
+	);
+	$processResult->success = $resultHandler->handle( $results );
+	return $processResult;
+
 }
 
 /**
@@ -30,7 +50,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
 	$end                    = $start + ( $page * $perPage );
 	$processResult          = new ProcessResult( $end >= $total );
 	$rows                   = getRowsFromCsv( $filePath, $start, $end );
-	$processResult->sucess = $resultHandler->handle( $rows );
+	$processResult->success = $resultHandler->handle( $rows );
 	return $processResult;
 
 }

@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use WpCliBatchProcess\AbstractArgProvider;
+use WpCliBatchProcess\DeleteHandler;
 use WpCliBatchProcess\Helpers;
 use WpCliBatchProcess\ProvidesQueryArgs;
 use WpCliBatchProcess\RecivesResults;
@@ -117,6 +118,73 @@ class ProcessWithWpQuery extends \WP_UnitTestCase {
 		
 		$testQuery->get_posts();
 		$this->assertSame(10, $testQuery->post_count);
+	}
+
+	public function testProcessAndDelete(){
+		self::factory()->post->create_many(75,[
+            'post_type' => 'post'
+        ]);
+       
+        $argsProvider = new class extends AbstractArgProvider {
+			
+            public function getArgs(): array{
+                return $this->mergeArgs([
+                    'post_type' => 'post',
+                ]);
+            }
+        };
+        $handler = new DeleteHandler();
+		$result = \WpCliBatchProcess\Helpers\processWithWpQueryAndDelete(
+			$argsProvider,$handler, new \WP_Query()
+		);
+		$this->assertTrue($result->wasSuccess());
+		$this->assertFalse($result->complete);	
+		
+		//Were 25 posts deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'post',
+			 'posts_per_page' => 100,
+		]);
+		
+		$testQuery->get_posts();
+		$this->assertSame(50, $testQuery->post_count);
+
+		//process page 2
+		$argsProvider->setPage(2);
+		$result = \WpCliBatchProcess\Helpers\processWithWpQueryAndDelete(
+			$argsProvider,$handler, new \WP_Query()
+		);
+		$this->assertTrue($result->wasSuccess(),json_encode($result));
+		$this->assertFalse($result->complete,json_encode($result));	
+
+		//Were 25 more posts deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'post',
+			 'posts_per_page' => 100,
+		]);
+		
+		$testQuery->get_posts();
+		$this->assertSame(25, $testQuery->post_count);
+
+		//process page 3
+		$argsProvider->setPage(3);
+		$this->assertSame(3,$argsProvider->getPage());
+		$result = \WpCliBatchProcess\Helpers\processWithWpQueryAndDelete(
+			$argsProvider,$handler, new \WP_Query()
+		);
+
+		//Were 25 more posts deleted?
+		$testQuery = new WP_Query([
+			 'post_type' => 'post',
+			 'posts_per_page' => 100,
+		]);
+		
+		$testQuery->get_posts();
+		$this->assertSame(0, $testQuery->post_count,json_encode($result));
+
+		$this->assertTrue($result->wasSuccess());
+		$this->assertTrue($result->complete,
+	json_encode($result));	
 	}
     
 }

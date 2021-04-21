@@ -154,8 +154,8 @@ function run_command( $args, $assoc_args = [] ) {
 	
 
 	$results = array_merge( $results, $processResults->toArray() );
-	// @todo deal with typo in ProcessResults
-	if ( $results['success'] || $results['sucess'] ) {
+	
+	if ( $results['success']  ) {
 		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
 		if( $exitOnComplete && $processResults->complete ){
 			\WP_CLI::error( 'Completed' );

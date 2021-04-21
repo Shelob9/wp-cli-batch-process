@@ -42,7 +42,7 @@ class FromCsvTest extends TestCase {
             }
         };
         $result = WpCliBatchProcess\Helpers\processFromCsv($filePath,$start,$end,$handler);
-        $this->assertTrue($result->success);
+        $this->assertTrue($result->wasSuccess());
         $this->assertFalse($result->complete);
     }
 
@@ -57,7 +57,7 @@ class FromCsvTest extends TestCase {
             }
         };
         $result = WpCliBatchProcess\Helpers\processFromCsv($filePath,$start,$end,$handler);
-        $this->assertTrue($result->success);
+        $this->assertTrue($result->wasSuccess());
         $this->assertTrue($result->complete);
     }
 }
