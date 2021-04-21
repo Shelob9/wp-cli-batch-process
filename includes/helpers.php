@@ -91,12 +91,13 @@ function getRowsFromCsv( string $filePath, int $start, int $end ) {
 }
 
 function processRun( int $page, int $perPage, array $processor ) {
-	$handler = is_string( $processor['handler'] ) && in_array(
+	$isDefaultDelete = is_string( $processor['handler'] ) && in_array(
 		$processor['handler'],
 		[
 			'WpCliBatchProcess::DeleteHandler',
 		]
-	) ? new DeleteHandler() : new $processor['handler']();
+	);
+	$handler = $isDefaultDelete ? new DeleteHandler() : new $processor['handler']();
 	
 	
 	switch ( $processor['type'] ) {
@@ -106,11 +107,20 @@ function processRun( int $page, int $perPage, array $processor ) {
 			$argsProvider->setPage( $page );
 			$argsProvider->setPerPage( $perPage );
 			$query          = new \WP_Query();
-			$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
-				$argsProvider,
-				$handler,
-				$query
-			);
+			if( $isDefaultDelete ){
+				$processResults = \WpCliBatchProcess\Helpers\processWithWpQueryAndDelete(
+					$argsProvider,
+					$handler,
+					$query
+				);
+			}else{
+				$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
+					$argsProvider,
+					$handler,
+					$query
+				);
+			}
+			
 			break;
 		case 'CSV':
 			$processResults = \WpCliBatchProcess\Helpers\processFromCsv(
