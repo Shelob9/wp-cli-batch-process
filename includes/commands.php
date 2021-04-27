@@ -52,20 +52,19 @@ function get_processor( string $name ) {
 	return false;
 }
 
-function process_batch( string $processor_name, int $page, int $perPage, array $options ) {
-	\WP_CLI::line( sprintf('Staring page %d',$page));
-	$commandResult = \WP_CLI::launch_self( 
-		"batch-process run $processor_name --page=$page --per-page=$perPage --exitOnComplete=true",
-		 $options,
-	);
-
-	if ( ! $commandResult ) {
-		return process_batch( $processor_name, $page + 1, $perPage, $options );
+function process_batch( $args,$progress ) {
+	$page = $args['page'];
+	\WP_CLI::line( sprintf( 'Starting page %d', $page ) );
+	$processResults = run_command( $args, [] );
+	if ( $processResults->complete ) {
+		$progress->finish();
+		\WP_CLI::success( 'Completed processing.' );
 	} else {
-		\WP_CLI::success( 
-			__( 'Success', 'wp-cli-plugin-name' )
-		);
+		$args['page'] = $args['page'] + 1;
+		$progress->tick();
+		process_batch( $args,$progress );
 	}
+
 }
 /**
  *
@@ -84,26 +83,21 @@ function process_batch( string $processor_name, int $page, int $perPage, array $
  * @return void
  */
 function run_batch_command( $args, $assoc_args = [] ) {
-
+  
 	$processor_name = $args[0];
-	$results        = default_results();
 	$processor      = get_processor( $processor_name );
 	// phpcs:ignore
 	if ( ! $processor ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 	}
-	$perPage = (int) $args['perpage'] ? $args['perpage'] : 25;
-	$page    = 1;
+   	$args['perpage'] = (int) $args['perpage'] ? $args['perpage'] : 25;
+	$args['page']    = 1;
+	$args['quiet'] = true;
 
-	$runCommandOptions = [
-		'return'     => true,   // Return 'STDOUT'; use 'all' for full object.
-		'parse'      => 'json', // Parse captured STDOUT to JSON array.
-		'launch'     => true,  // Reuse the current process.
-		'exit_error' => true,   // Halt script execution on error.
-	];
+	$progress = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting batch process %s', $processor_name ),100  );
+
 	// Process recurisvely until complete or error
-	process_batch( $processor_name, $page, $perPage, $runCommandOptions );
-
+	process_batch( $args,$progress );
 }
 /**
  *
@@ -119,13 +113,13 @@ function run_batch_command( $args, $assoc_args = [] ) {
  *
  * [--page]
  * : Page of query
- * 
- * [--exitOnComplete]
- * : Return error when completed if true. Default is false.
+ *
+ * [--quiet]
+ * : No output. Default is false.
  *
  * @param array $args       Positional args.
  * @param array $assoc_args Associative args.
- * @return void
+ * @return \WpCliBatchProcess\ProcessResult
  */
 function run_command( $args, $assoc_args = [] ) {
 	$processor_name = $args[0];
@@ -136,31 +130,37 @@ function run_command( $args, $assoc_args = [] ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 		return;
 	}
-	$page           = isset($args['page']) ? (int)$args['page'] : 1;
-	$perPage        = isset($args['perpage']) ? (int)$args['perpage'] : 25;
-	$exitOnComplete        = isset($args['exitOnComplete']) ?
-		(bool) $args['exitOnComplete'] : false; 
+	$quiet = isset( $args['quiet']) ?$args['quiet']:false;
+	$page    = isset( $args['page'] ) ? (int) $args['page'] : 1;
+	$perPage = isset( $args['perpage'] ) ? (int) $args['perpage'] : 25;
+
 	try {
 		$processResults = \WpCliBatchProcess\Helpers\processRun(
 			$page,
 			$perPage,
 			$processor
 		);
-		
-	} catch (\Throwable $th) {
+
+	} catch ( \Throwable $th ) {
+		if( $quiet ){
+			throw $th;
+		}
 		 \WP_CLI::error( $th->__toString() );
 		 return;
 	}
-	
+	if( $quiet ){
+		return $processResults;
+	}
+	\WP_CLI::line( sprintf( 'Page %d: process %s complete', $page, $processResults->complete ? 'is' : 'is not' ) );
 
-	$results = array_merge( $results, $processResults->toArray() );
-	
-	if ( $results['success']  ) {
-		\WP_CLI::success( __( 'Success', 'wp-cli-plugin-name' ) );
-		if( $exitOnComplete && $processResults->complete ){
-			\WP_CLI::error( 'Completed' );
+	if ( $processResults->wasSuccess() ) {
+		if ( $processResults->complete ) {
+			\WP_CLI::halt( 'Completed Run.' );
+		} else {
+			\WP_CLI::success( sprintf( 'Completed page %d', $page ) );
 		}
 	} else {
-		\WP_CLI::error( $results['error_code'] . ': ' . $results['error_message'] );
+		\WP_CLI::error( sprintf( 'Error on page %d', $page ) );
 	}
+	return $processResults;
 }

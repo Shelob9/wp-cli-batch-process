@@ -9,10 +9,10 @@ class ProcessResult {
 		$this->complete = $complete;
 	}
 
-	
-	//shim to deal with a typo
+
+	// shim to deal with a typo
 	public function wasSuccess() {
-		if( isset( $this->success ) ){
+		if ( isset( $this->success ) ) {
 			return $this->success;
 		}
 		return false;
@@ -20,7 +20,7 @@ class ProcessResult {
 	public function toArray():array {
 		return [
 			'sucess'   => $this->wasSuccess(),
-			'success' => $this->wasSuccess(),
+			'success'  => $this->wasSuccess(),
 			'complete' => $this->complete,
 		];
 	}

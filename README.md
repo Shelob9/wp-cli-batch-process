@@ -157,8 +157,10 @@ These tests are located in `/tests/integration`
 
 ### Practial Test
 
+Add 100 piblished pages and 100 draft pages. Use command to delete draft pages.
 ```bash
-10updocker wp post generate --count=100 --post_status=publish --post_type=page --post_date=1999-01-04
+10updocker wp post generate --count=100 --post_type=page --post_date=1999-01-04
+10updocker wp post generate --count=100 --post_status=draft --post_type=page --post_date=1999-01-04
 10updocker wp batch-process batch delete-published-pages
 10updocker wp post list --post_type=page --format=ids
 ```

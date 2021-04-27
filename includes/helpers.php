@@ -16,7 +16,8 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
 		$queryArgProvider->getArgs()
 	);
 	$results                = $query->get_posts();
-	$processResult          = new ProcessResult( 				$query->max_num_pages <= $queryArgProvider->getPage() 
+	$processResult          = new ProcessResult(
+		$query->max_num_pages <= $queryArgProvider->getPage()
 	);
 	$processResult->success = $resultHandler->handle( $results );
 	return $processResult;
@@ -26,16 +27,20 @@ function processWithWpQuery( ProvidesQueryArgs $queryArgProvider, RecivesResults
  * Handler for CLI commands that use WP_Query and delete
  */
 function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, RecivesResults $resultHandler, \WP_Query $query ):ProcessResult {
-	$args = $queryArgProvider->getArgs();
-	$args['paged'] = 1;//always 1 for deletes
+	$args          = $queryArgProvider->getArgs();
+	$args['paged'] = 1;// always 1 for deletes
 	$query->parse_query(
 		$args
 	);
-	$results                = $query->get_posts();
-	$processResult          = new ProcessResult( 
-		//Delete until on last page
+	$results = $query->get_posts();
+
+	$processResult = new ProcessResult(
+		// Delete until on last page
 		$query->max_num_pages == 1
 	);
+   	if ( $query->post_count <= 0 ) {
+		$processResult->complete = true;
+	}
 	$processResult->success = $resultHandler->handle( $results );
 	return $processResult;
 
@@ -90,6 +95,14 @@ function getRowsFromCsv( string $filePath, int $start, int $end ) {
 	return $rows;
 }
 
+/**
+ * Undocumented function
+ *
+ * @param integer $page
+ * @param integer $perPage
+ * @param array   $processor
+ * @return \WpCliBatchProcess\ProcessResult
+ */
 function processRun( int $page, int $perPage, array $processor ) {
 	$isDefaultDelete = is_string( $processor['handler'] ) && in_array(
 		$processor['handler'],
@@ -97,30 +110,29 @@ function processRun( int $page, int $perPage, array $processor ) {
 			'WpCliBatchProcess::DeleteHandler',
 		]
 	);
-	$handler = $isDefaultDelete ? new DeleteHandler() : new $processor['handler']();
-	
-	
+	$handler         = $isDefaultDelete ? new DeleteHandler() : new $processor['handler']();
+
 	switch ( $processor['type'] ) {
 		case 'WP_QUERY':
 		case 'WP_Query':
 			$argsProvider = new QueryFromJson( $processor['source'] );
 			$argsProvider->setPage( $page );
 			$argsProvider->setPerPage( $perPage );
-			$query          = new \WP_Query();
-			if( $isDefaultDelete ){
+			$query = new \WP_Query();
+			if ( $isDefaultDelete ) {
 				$processResults = \WpCliBatchProcess\Helpers\processWithWpQueryAndDelete(
 					$argsProvider,
 					$handler,
 					$query
 				);
-			}else{
+			} else {
 				$processResults = \WpCliBatchProcess\Helpers\processWithWpQuery(
 					$argsProvider,
 					$handler,
 					$query
 				);
 			}
-			
+
 			break;
 		case 'CSV':
 			$processResults = \WpCliBatchProcess\Helpers\processFromCsv(
