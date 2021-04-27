@@ -1,6 +1,9 @@
 <?php
 namespace WpCliBatchProcess;
 
+/**
+ * Most WP_Query commands should extend this.
+ */
 abstract class AbstractArgProvider implements ProvidesQueryArgs {
 
 	protected $page;

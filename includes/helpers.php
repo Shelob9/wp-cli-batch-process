@@ -46,8 +46,15 @@ function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, Reciv
 
 }
 
+
 /**
- * Handler for CLI commands that use CSV file as input.
+ * Handler for CLI commands that use CSV file as input. 
+ *
+ * @param string $filePath
+ * @param integer $page
+ * @param integer $perPage
+ * @param RecivesResults $resultHandler
+ * @return \WpCliBatchProcess\ProcessResult
  */
 function processFromCsv( string $filePath, int $page, int $perPage, RecivesResults $resultHandler ) {
 	$total         = getCsvSize( $filePath );
@@ -71,6 +78,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
  * Get total rows, not including headers in a csv file.
  *
  * @param string $filePath Path to file, including extension.
+ * @return integer
  */
 function getCsvSize( string $filePath ) : int {
 	$file = new \SplFileObject( $filePath, 'datum' );
@@ -84,6 +92,7 @@ function getCsvSize( string $filePath ) : int {
  * @param string $filePath Path to file, including extension.
  * @param int    $start First row.
  * @param int    $end Last row.
+ * @return array
  */
 function getRowsFromCsv( string $filePath, int $start, int $end ) {
 	$handle     = fopen( $filePath, 'datum' );
@@ -103,7 +112,7 @@ function getRowsFromCsv( string $filePath, int $start, int $end ) {
 }
 
 /**
- * Undocumented function
+ * Run one batch of processing, decoupled from WP_CLI
  *
  * @param integer $page
  * @param integer $perPage

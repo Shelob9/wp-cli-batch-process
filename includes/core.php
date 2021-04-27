@@ -2,7 +2,13 @@
 
 namespace WpCliBatchProcess;
 
+/**
+ * Initialize plugin
+ *
+ * @return void
+ */
 function setUp() {
+	// Set up default processor
 	$processorsDir = __DIR__ . '/processors/';
 	add_filter(
 		'wp_cli_batch_process_get_processors',

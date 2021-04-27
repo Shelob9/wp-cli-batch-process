@@ -1,6 +1,9 @@
 <?php
 namespace WpCliBatchProcess;
 
+/**
+ * Default deleter
+ */
 class DeleteHandler implements RecivesResults {
 	public function handle( $results ): bool {
 		foreach ( $results as $result ) {

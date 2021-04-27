@@ -40,7 +40,12 @@ function default_results() {
 }
 
 
-
+/**
+ * Find processor, by name.
+ *
+ * @param string $name
+ * @return array|false
+ */
 function get_processor( string $name ) {
 	$processors = apply_filters(
 		'wp_cli_batch_process_get_processors',
@@ -67,7 +72,7 @@ function process_batch( $args, $progress ) {
 
 }
 /**
- *
+ * Batch command
  *
  *
  * ## OPTIONS
@@ -100,7 +105,7 @@ function run_batch_command( $args, $assoc_args = [] ) {
 	process_batch( $args, $progress );
 }
 /**
- *
+ * Single page command
  *
  *
  * ## OPTIONS
