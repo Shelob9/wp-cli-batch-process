@@ -74,7 +74,6 @@ function process_batch( $args, $progress ) {
 /**
  * Batch command
  *
- *
  * ## OPTIONS
  *
  * <processor>
@@ -106,7 +105,6 @@ function run_batch_command( $args, $assoc_args = [] ) {
 }
 /**
  * Single page command
- *
  *
  * ## OPTIONS
  *

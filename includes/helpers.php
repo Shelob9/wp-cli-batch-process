@@ -48,11 +48,11 @@ function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, Reciv
 
 
 /**
- * Handler for CLI commands that use CSV file as input. 
+ * Handler for CLI commands that use CSV file as input.
  *
- * @param string $filePath
- * @param integer $page
- * @param integer $perPage
+ * @param string         $filePath
+ * @param integer        $page
+ * @param integer        $perPage
  * @param RecivesResults $resultHandler
  * @return \WpCliBatchProcess\ProcessResult
  */
