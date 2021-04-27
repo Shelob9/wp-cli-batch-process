@@ -50,12 +50,19 @@ function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, Reciv
  * Handler for CLI commands that use CSV file as input.
  */
 function processFromCsv( string $filePath, int $page, int $perPage, RecivesResults $resultHandler ) {
-	$total                  = getCsvSize( $filePath );
-	$start                  = ( $page * $perPage ) + 1;
-	$end                    = $start + ( $page * $perPage );
-	$processResult          = new ProcessResult( $end >= $total );
-	$rows                   = getRowsFromCsv( $filePath, $start, $end );
-	$processResult->success = $resultHandler->handle( $rows );
+	$total         = getCsvSize( $filePath );
+	$start         = $page == 1 ? 1 : ( $page * $perPage ) + 1;
+	$end           = $start + ( $page * $perPage );
+	$processResult = new ProcessResult( $end >= $total );
+	$rows          = getRowsFromCsv( $filePath, $start, $end );
+	$data          = [];
+	foreach ( $rows as $row ) {
+		$datum       = new \stdClass();
+		$datum->ID   = $row[1];
+		$datum->slug = $row[0];
+		$data[]      = $datum;
+	}
+	$processResult->success = $resultHandler->handle( $data );
 	return $processResult;
 
 }
@@ -66,7 +73,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
  * @param string $filePath Path to file, including extension.
  */
 function getCsvSize( string $filePath ) : int {
-	$file = new \SplFileObject( $filePath, 'r' );
+	$file = new \SplFileObject( $filePath, 'datum' );
 	$file->seek( PHP_INT_MAX );
 	return $file->key();
 }
@@ -79,7 +86,7 @@ function getCsvSize( string $filePath ) : int {
  * @param int    $end Last row.
  */
 function getRowsFromCsv( string $filePath, int $start, int $end ) {
-	$handle     = fopen( $filePath, 'r' );
+	$handle     = fopen( $filePath, 'datum' );
 	$count      = getCsvSize( $filePath );
 	$lineNumber = 0;
 	$rows       = [];
