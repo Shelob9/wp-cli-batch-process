@@ -52,7 +52,7 @@ function get_processor( string $name ) {
 	return false;
 }
 
-function process_batch( $args,$progress ) {
+function process_batch( $args, $progress ) {
 	$page = $args['page'];
 	\WP_CLI::line( sprintf( 'Starting page %d', $page ) );
 	$processResults = run_command( $args, [] );
@@ -62,7 +62,7 @@ function process_batch( $args,$progress ) {
 	} else {
 		$args['page'] = $args['page'] + 1;
 		$progress->tick();
-		process_batch( $args,$progress );
+		process_batch( $args, $progress );
 	}
 
 }
@@ -83,21 +83,21 @@ function process_batch( $args,$progress ) {
  * @return void
  */
 function run_batch_command( $args, $assoc_args = [] ) {
-  
+
 	$processor_name = $args[0];
 	$processor      = get_processor( $processor_name );
 	// phpcs:ignore
 	if ( ! $processor ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 	}
-   	$args['perpage'] = (int) $args['perpage'] ? $args['perpage'] : 25;
+	$args['perpage'] = (int) $args['perpage'] ? $args['perpage'] : 25;
 	$args['page']    = 1;
-	$args['quiet'] = true;
+	$args['quiet']   = true;
 
-	$progress = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting batch process %s', $processor_name ),100  );
+	$progress = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting batch process %s', $processor_name ), 100 );
 
 	// Process recurisvely until complete or error
-	process_batch( $args,$progress );
+	process_batch( $args, $progress );
 }
 /**
  *
@@ -130,7 +130,7 @@ function run_command( $args, $assoc_args = [] ) {
 		\WP_CLI::error( sprintf( 'Processor %s not found', $processor_name ) );
 		return;
 	}
-	$quiet = isset( $args['quiet']) ?$args['quiet']:false;
+	$quiet   = isset( $args['quiet'] ) ? $args['quiet'] : false;
 	$page    = isset( $args['page'] ) ? (int) $args['page'] : 1;
 	$perPage = isset( $args['perpage'] ) ? (int) $args['perpage'] : 25;
 
@@ -142,13 +142,13 @@ function run_command( $args, $assoc_args = [] ) {
 		);
 
 	} catch ( \Throwable $th ) {
-		if( $quiet ){
+		if ( $quiet ) {
 			throw $th;
 		}
 		 \WP_CLI::error( $th->__toString() );
 		 return;
 	}
-	if( $quiet ){
+	if ( $quiet ) {
 		return $processResults;
 	}
 	\WP_CLI::line( sprintf( 'Page %d: process %s complete', $page, $processResults->complete ? 'is' : 'is not' ) );

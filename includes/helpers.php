@@ -38,7 +38,7 @@ function processWithWpQueryAndDelete( ProvidesQueryArgs $queryArgProvider, Reciv
 		// Delete until on last page
 		$query->max_num_pages == 1
 	);
-   	if ( $query->post_count <= 0 ) {
+	if ( $query->post_count <= 0 ) {
 		$processResult->complete = true;
 	}
 	$processResult->success = $resultHandler->handle( $results );
