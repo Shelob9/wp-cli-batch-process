@@ -64,7 +64,7 @@ add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 Since this the index of used above is "name_of_command", you can run this command with:
 
 ```bash
-wp batch-process run name_of_command
+wp batch-process batch name_of_command
 wp batch-process run name_of_command --page=2 --perpage=50
 ```
 
@@ -95,7 +95,7 @@ add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 Since this the index of used above is "other_command", you can run this command with:
 
 ```bash
-wp batch-process run other_command
+wp batch-process batch other_command
 wp batch-process run other_command --page=2 --perpage=50
 ```
 
@@ -107,8 +107,8 @@ wp batch-process run other_command --page=2 --perpage=50
 add_filter( 'wp_cli_batch_process_get_processors', function($processors){
     $processors['delete_something'] = [
             'type' => 'CSV',
-            'source' => '/path/to/a.csv,'
-            'handler' => WpCliBatchProcess::DeleteHandler
+            'source' => '/path/to/a.csv',
+            'handler' => 'WpCliBatchProcess::DeleteHandler'
 	];
 	return $processors;
 });
@@ -118,7 +118,7 @@ add_filter( 'wp_cli_batch_process_get_processors', function($processors){
 Since this the index of used above is "delete_something", you can run this command with:
 
 ```bash
-wp batch-process run delete_something
+wp batch-process batch delete_something
 wp batch-process run delete_something --page=2 --perpage=50
 ```
 
