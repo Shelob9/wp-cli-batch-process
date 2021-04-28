@@ -1,12 +1,12 @@
 {
-	"name": "someone/wp-cli-batch-process",
+	"name": "josh/wp-cli-batch-process",
 	"description": "WordPress plugin to batch processes results from CSV for WP_Query",
 	"type": "wordpress-plugin",
 	"license": "GPLv2 or later",
 	"authors": [
 		{
-			"name": "Someone",
-			"email": "pete@petenelson.com"
+			"name": "Josh Pollock",
+			"email": "josh@joshpress.net"
 		}
 	],
 	"require": {
