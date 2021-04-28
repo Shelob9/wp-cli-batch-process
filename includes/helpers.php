@@ -81,7 +81,7 @@ function processFromCsv( string $filePath, int $page, int $perPage, RecivesResul
  * @return integer
  */
 function getCsvSize( string $filePath ) : int {
-	$file = new \SplFileObject( $filePath, 'datum' );
+	$file = new \SplFileObject( $filePath, 'r' );
 	$file->seek( PHP_INT_MAX );
 	return $file->key();
 }
@@ -95,7 +95,7 @@ function getCsvSize( string $filePath ) : int {
  * @return array
  */
 function getRowsFromCsv( string $filePath, int $start, int $end ) {
-	$handle     = fopen( $filePath, 'datum' );
+	$handle     = fopen( $filePath, 'r' );
 	$count      = getCsvSize( $filePath );
 	$lineNumber = 0;
 	$rows       = [];
